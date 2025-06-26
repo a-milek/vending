@@ -1,5 +1,4 @@
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/react";
-import { RiSquareFill } from "react-icons/ri";
 
 interface Props {
   lines: string[];
@@ -43,10 +42,11 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
           <HStack justify="center" alignSelf="flex-end">
             {sugar > 0 ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <RiSquareFill
+                <Box
                   key={i}
-                  size="100%"
-                  color={i < sugar ? "lightgray" : "#0F4AFE"}
+                  boxSize="12px" // ← tweak size here if needed
+                  bg={i < sugar ? "whiteAlpha.800" : "#0F4AFE"}
+                  borderRadius="sm"
                 />
               ))
             ) : (

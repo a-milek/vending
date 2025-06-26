@@ -6,7 +6,7 @@ import { useIdleTimer } from "react-idle-timer";
 import TechKeyboard from "./components/TechKeyboard";
 import SugarPanel from "./components/SugarPanel";
 import LoadingScreen from "./components/LoadingScreen";
-import { VisuallyHidden } from "@chakra-ui/react";
+import { Box, VisuallyHidden } from "@chakra-ui/react";
 
 function App() {
   const [isTimedOut, setIsTimedOut] = useState(false);
@@ -96,9 +96,10 @@ function App() {
 
   return (
     <>
+    <Box bg={tech?"red":"blackAlpha.900"} minHeight="100vh"alignContent={"center"}>
       {!wsConnected && <p>Reconnecting...</p>}
 
-      {progress > 0 ? (
+      {(progress > 0||ready) ? (
         <>
           <LoadingScreen progress={progress} ready={ready} />
           <VisuallyHidden>
@@ -124,6 +125,7 @@ function App() {
           <CoffeeGrid onClick={handleCoffeeSelection} tech={tech} />
         </>
       )}
+    </Box>
     </>
   );
 

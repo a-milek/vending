@@ -38,17 +38,25 @@ export default function LoadingScreen({ progress, ready }: Props) {
           height="20%"
         >
           {ready ? (
-            <Heading color="white" fontSize={"xl"} fontWeight="bold">
+            <Box  height="5vh">
+            <Heading color="white" fontSize={"50px"} fontWeight="bold" background="blackAlpha.800">
               ODBIERZ PRODUKT
             </Heading>
+            </Box>
           ) : (
-            <Progress
-              value={progress}
-              colorScheme="whiteAlpha" // "white" nie jest standardowym schematem; "whiteAlpha" działa lepiej
-              size="lg"
-              height="5vh"
-              variant="outline"
-            />
+             <Progress
+            value={progress}
+            size="lg"
+            height="5vh"
+            variant="outline"
+            sx={{
+              borderColor: "white",
+              background: "black",
+              "& > div": {
+                backgroundColor: "white",
+              },
+            }}
+         />
           )}
         </Box>
       </Flex>

@@ -12,7 +12,7 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  useToast,
+  
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import coffeeData from "../config/CoffeeData";
@@ -29,7 +29,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
+  
 
   useEffect(() => {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -52,13 +52,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const handleSetPriceClick = (index: number) => {
     setEditingIndex(index);
     setInputValue("");
-    toast({
-      title: `Ustaw cenę dla: ${coffeeList[index].name}`,
-      status: "info",
-      duration: 2000,
-      isClosable: true,
-      position: "top",
-    });
+    
     onOpen();
   };
 
@@ -113,7 +107,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
         gap={5}
         paddingY={5}
         height="100%"
-        width={tech ? "50%" : "77%"}
+        width={tech ? "50%" : "70%"}
         mx="auto"
       >
         {coffeeList.map((coffee, index) => (
@@ -168,7 +162,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="xs">
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent  style={{ willChange: "opacity, transform" }}>
           <ModalHeader>Nowa cena</ModalHeader>
           <ModalBody>
             <Input
