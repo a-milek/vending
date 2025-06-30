@@ -15,6 +15,15 @@ function App() {
   const [tech, setTech] = useState(false);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
+  const [current, setCurrentPrice] = useState<number | null>(null);
+const currentPriceRef = useRef<number | null>(null);
+
+useEffect(() => {
+  currentPriceRef.current = current;
+}, [current]);
+
+const getCurrentPrice = () => currentPriceRef.current;
+
 
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -109,6 +118,7 @@ function App() {
               setTech={setTech}
               setProgress={setProgress}
               setReady={setReady}
+              setCurrentPrice={setCurrentPrice}
             />
           </VisuallyHidden>
         </>
@@ -120,8 +130,9 @@ function App() {
             setTech={setTech}
             setProgress={setProgress}
             setReady={setReady}
+            setCurrentPrice={setCurrentPrice}
           />
-          {tech ? <TechKeyboard onClick={placeOrder} /> : null}
+          {tech ? <TechKeyboard onClick={placeOrder} getCurrentPrice={getCurrentPrice} /> : null}
           <CoffeeGrid onClick={handleCoffeeSelection} tech={tech} />
         </>
       )}

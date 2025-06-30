@@ -7,6 +7,7 @@ interface Props {
   setTech: (value: boolean) => void;
   setProgress: (value: number) => void;
   setReady: (vlue: boolean) => void;
+   setCurrentPrice:(price: number | null)=>void;
 }
 
 const SugarPanel = ({
@@ -15,6 +16,7 @@ const SugarPanel = ({
   setTech,
   setProgress,
   setReady,
+  setCurrentPrice
 }: Props) => {
   return (
     <HStack gap={5} py={2} paddingTop="40px" width="70%" mx="auto">
@@ -35,8 +37,8 @@ const SugarPanel = ({
           lines={lines}
           setTech={setTech}
           setProgress={setProgress}
-          setReady={setReady}
-        />
+          setReady={setReady} 
+          setCurrentPrice={setCurrentPrice} />
       </Flex>
 
       <Box width="33%">

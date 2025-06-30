@@ -9,7 +9,7 @@ interface Props {
 const LCD_Simulator = ({ lines, sugar }: Props) => {
   const TextStyle = {
     color: "white",
-    fontSize: "clamp(0.8rem, 2vw, 1.5rem)",
+    fontSize: "xl",
     fontWeight: "bold",
   };
 
