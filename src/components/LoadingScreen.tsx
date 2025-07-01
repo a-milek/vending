@@ -13,10 +13,10 @@ export default function LoadingScreen({ progress, ready }: Props) {
         minH="100vh"
         justify="center"
         align="center"
-        bg="black"
+        
         position="relative"
         direction="column"
-        color="white"
+        
       >
         <Image
           src="assets/coffee-2.gif"

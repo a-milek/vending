@@ -5,6 +5,29 @@
   text-align: center;
 }
 
+html, body, #root {
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  overflow: hidden;
+  height: 100%;
+}
+
+*, *::after, *::before {
+	user-select: none;
+	-webkit-user-drag: none;
+	-webkit-app-region: no-drag;
+	cursor: none;
+
+   touch-action: none;            /* block swiping/drag */
+  -webkit-user-drag: none;      /* block image dragging */
+  
+  -webkit-touch-callout: none;   
+  
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

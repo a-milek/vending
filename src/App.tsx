@@ -88,6 +88,12 @@ function App() {
     }
   };
 
+  useEffect(() => {
+  document.querySelectorAll("img").forEach((img) => {
+    img.setAttribute("draggable", "false");
+  });
+}, []);
+
   const handleCoffeeSelection = async (index: number) => {
     const coffee = coffeeData[index];
     if (!coffee) return;

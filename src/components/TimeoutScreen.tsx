@@ -19,6 +19,7 @@ const TimeoutScreen = () => {
           bg="black" // opcjonalnie tło
         >
           <Image
+           draggable="false"
             src={selectedAd}
             alt="Advertisement"
             objectFit="contain"

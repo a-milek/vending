@@ -64,14 +64,14 @@ const LOCAL_STORAGE_KEY = "coffee-prices";
 
     setStatus(`Ustawiam cenę dla pozycji ${i}: ${currentPrice.toFixed(2)} → ${targetPrice.toFixed(2)}`);
 
-    while (Math.abs(currentPrice - targetPrice) > 0.001) {
+    while (Math.abs(currentPrice - targetPrice) > 0.000) {
       if (currentPrice < targetPrice) {
         await onClick(1); // PLUS
       } else {
         await onClick(0); // MINUS
       }
 
-      await sleep(100);
+      await sleep(150);
 
       currentPrice = getCurrentPrice();
 
@@ -86,7 +86,7 @@ const LOCAL_STORAGE_KEY = "coffee-prices";
     setStatus(`Cena ustawiona dla pozycji ${i}: ${currentPrice.toFixed(2)}. Klikam Enter.`);
     await onClick(10); // ENTER
 
-    await sleep(300); // opcjonalne odczekanie przed kolejną pozycją
+    await sleep(500); // opcjonalne odczekanie przed kolejną pozycją
   }
 
   setStatus("Wszystkie ceny ustawione.");

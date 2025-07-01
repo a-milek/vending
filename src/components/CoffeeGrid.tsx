@@ -90,6 +90,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
               position="relative"
               width="100%"
               onClickCapture={() => onClick(index)}
+
             >
               <Image
                 src={coffee.image || "assets/icons/simplecoffee.png"}
@@ -97,13 +98,13 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
                 width="100%"
                 borderWidth="1px"
                 borderRadius="lg"
-                draggable={false}
+                 draggable="false"
                 userSelect="none"
               />
               <Text
                 position="absolute"
                 bottom={3}
-                left={6}
+                left={3}
                 bg="white"
                 color="#242424"
                 width="30%"
@@ -115,6 +116,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
                 alignItems="center"
                 justifyContent="center"
                 pointerEvents="none"
+                userSelect="none"
               >
                 {coffee.price.toFixed(2).replace(".", ",")}zł
               </Text>

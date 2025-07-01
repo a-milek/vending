@@ -67,11 +67,12 @@ const PhotoEditModal = ({ isOpen, onClose, onSave }: Props) => {
                 alignItems="center"
               >
                 <Image
+                 draggable="false"
                   src={src}
                   alt={`icon-${i}`}
                   boxSize="100%"
                   objectFit="contain"
-                  draggable={false}
+                  
                   userSelect="none"
                 />
               </Box>

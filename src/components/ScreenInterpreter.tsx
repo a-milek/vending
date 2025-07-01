@@ -27,7 +27,7 @@ const ScreenInterpreter = ({
   function interpretLines(rawLines: string[]) {
     const newLines = [...rawLines];
     let foundProgress = false;
-    let sugarCount = 0;
+    let sugarCount: number | null = null;
     let currentPrice: number | null = null;
 
     for (let i = 0; i < newLines.length; i++) {
@@ -82,7 +82,9 @@ const ScreenInterpreter = ({
     }
 
     if (!foundProgress) setProgress(0);
-    setSugar(sugarCount);
+    if (sugarCount !== null) {
+  setSugar(sugarCount);
+}
     setCurrentPrice(currentPrice);
     setInterpretedLines(newLines);
   }

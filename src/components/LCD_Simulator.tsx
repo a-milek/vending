@@ -27,7 +27,7 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
       justifyContent="space-between"
       p={2}
     >
-      <Flex justifyContent="center" alignItems="center" py={4}>
+      <Flex justifyContent="center" alignItems="center" paddingTop={4}>
         <Box w="100%" h="100%" textAlign="center" userSelect="none">
           <VStack gap={2} paddingTop={1}>
             {Array(4)
@@ -40,11 +40,11 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
           </VStack>
 
           <HStack justify="center" alignSelf="flex-end">
-            {sugar > 0 ? (
+            {sugar != 0 ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <Box
                   key={i}
-                  boxSize="12px" // ← tweak size here if needed
+                  boxSize="30px" // ← tweak size here if needed
                   bg={i < sugar ? "whiteAlpha.800" : "#0F4AFE"}
                   borderRadius="sm"
                 />
@@ -55,7 +55,7 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
               </Text>
             )}
           </HStack>
-        </Box>
+      </Box>
       </Flex>
     </Box>
   );
