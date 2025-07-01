@@ -12,18 +12,17 @@ function App() {
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [wsConnected, setWsConnected] = useState(false);
   const [lines, setLines] = useState<string[]>(["Oczekiwanie na dane"]);
-  const [tech, setTech] = useState(false);
+  const [tech, setTech] = useState(true);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [current, setCurrentPrice] = useState<number | null>(null);
-const currentPriceRef = useRef<number | null>(null);
+  const currentPriceRef = useRef<number | null>(null);
 
-useEffect(() => {
-  currentPriceRef.current = current;
-}, [current]);
+  useEffect(() => {
+    currentPriceRef.current = current;
+  }, [current]);
 
-const getCurrentPrice = () => currentPriceRef.current;
-
+  const getCurrentPrice = () => currentPriceRef.current;
 
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -105,13 +104,29 @@ const getCurrentPrice = () => currentPriceRef.current;
 
   return (
     <>
-    <Box bg={tech?"red":"blackAlpha.900"} minHeight="100vh"alignContent={"center"}>
-      {!wsConnected && <p>Reconnecting...</p>}
+      <Box
+        bg={tech ? "red" : "blackAlpha.900"}
+        minHeight="100vh"
+        alignContent={"center"}
+      >
+        {!wsConnected && <p>Reconnecting...</p>}
 
-      {(progress > 0||ready) ? (
-        <>
-          <LoadingScreen progress={progress} ready={ready} />
-          <VisuallyHidden>
+        {progress > 0 || ready ? (
+          <>
+            <LoadingScreen progress={progress} ready={ready} />
+            <VisuallyHidden>
+              <SugarPanel
+                onClick={placeOrder}
+                lines={lines}
+                setTech={setTech}
+                setProgress={setProgress}
+                setReady={setReady}
+                setCurrentPrice={setCurrentPrice}
+              />
+            </VisuallyHidden>
+          </>
+        ) : (
+          <>
             <SugarPanel
               onClick={placeOrder}
               lines={lines}
@@ -120,23 +135,16 @@ const getCurrentPrice = () => currentPriceRef.current;
               setReady={setReady}
               setCurrentPrice={setCurrentPrice}
             />
-          </VisuallyHidden>
-        </>
-      ) : (
-        <>
-          <SugarPanel
-            onClick={placeOrder}
-            lines={lines}
-            setTech={setTech}
-            setProgress={setProgress}
-            setReady={setReady}
-            setCurrentPrice={setCurrentPrice}
-          />
-          {tech ? <TechKeyboard onClick={placeOrder} getCurrentPrice={getCurrentPrice} /> : null}
-          <CoffeeGrid onClick={handleCoffeeSelection} tech={tech} />
-        </>
-      )}
-    </Box>
+            {tech ? (
+              <TechKeyboard
+                onClick={placeOrder}
+                getCurrentPrice={getCurrentPrice}
+              />
+            ) : null}
+            <CoffeeGrid onClick={handleCoffeeSelection} tech={tech} />
+          </>
+        )}
+      </Box>
     </>
   );
 
