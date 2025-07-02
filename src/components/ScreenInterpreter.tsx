@@ -44,10 +44,16 @@ const ScreenInterpreter = ({
       const codes = [...line].map((ch) => ch.charCodeAt(0));
       const progressCodes = codes.filter((code) => code >= 0x03 && code <= 0x07);
       if (progressCodes.length > 0) {
+        foundProgress = true;
         const sum = progressCodes.reduce((a, b) => a + b, 0);
         const percent = Math.round((sum / 126) * 100);
+        console.log(percent);
+          if(percent==100){
+            setReady(true);
+        }
+        
         setProgress(percent);
-        foundProgress = true;
+      
       }
 
       // Tryb techniczny i gotowość
@@ -60,6 +66,7 @@ const ScreenInterpreter = ({
         setReady(false);
       }
       if (line.startsWith("NAPOJ")) {
+        setProgress(100)
         setReady(true);
       }
 

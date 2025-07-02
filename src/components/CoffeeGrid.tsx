@@ -23,12 +23,12 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const [coffeeList, setCoffeeList] = useState(coffeeData);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingNameIndex, setEditingNameIndex] = useState<number | null>(null);
-  const [editingPhotoIndex, setEditingPhotoIndex] = useState<number | null>(
-    null
-  );
+  const [editingPhotoIndex, setEditingPhotoIndex] = useState<number | null>(null);
+  
+  // Track selected (highlighted) coffee index:
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const photoModal = useDisclosure();
-
   const priceModal = useDisclosure();
   const nameModal = useDisclosure();
 
@@ -69,9 +69,16 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
     setEditingNameIndex(index);
     nameModal.onOpen();
   };
+
   const handleSetPicClick = (index: number) => {
     setEditingPhotoIndex(index);
     photoModal.onOpen();
+  };
+
+  // Handle click on coffee item: call parent onClick & set selected highlight
+  const handleCoffeeClick = (index: number) => {
+    setSelectedIndex(index);
+    onClick(index);
   };
 
   return (
@@ -89,16 +96,20 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
             <Box
               position="relative"
               width="100%"
-              onClickCapture={() => onClick(index)}
-
+              onClickCapture={() => handleCoffeeClick(index)}
+              cursor="pointer"
+              borderWidth={selectedIndex === index ? "3px" : "1px"}
+              borderColor={selectedIndex === index ? "blue.400" : "black"}
+              borderRadius="lg"
+              transition="border-color 0.3s ease"
+              _hover={{ borderColor: "blue.300" }}
             >
               <Image
                 src={coffee.image || "assets/icons/simplecoffee.png"}
                 alt={coffee.name}
                 width="100%"
-                borderWidth="1px"
                 borderRadius="lg"
-                 draggable="false"
+                draggable="false"
                 userSelect="none"
               />
               <Text
