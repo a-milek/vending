@@ -12,7 +12,7 @@ function App() {
   const [isTimedOut, setIsTimedOut] = useState(false);
   const [wsConnected, setWsConnected] = useState(false);
   const [lines, setLines] = useState<string[]>(["Oczekiwanie na dane"]);
-  const [tech, setTech] = useState(true);
+  const [tech, setTech] = useState(false);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [current, setCurrentPrice] = useState<number | null>(null);
@@ -89,10 +89,10 @@ function App() {
   };
 
   useEffect(() => {
-  document.querySelectorAll("img").forEach((img) => {
-    img.setAttribute("draggable", "false");
-  });
-}, []);
+    document.querySelectorAll("img").forEach((img) => {
+      img.setAttribute("draggable", "false");
+    });
+  }, []);
 
   const handleCoffeeSelection = async (index: number) => {
     const coffee = coffeeData[index];

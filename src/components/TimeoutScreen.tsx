@@ -3,9 +3,17 @@ import { Flex, Image } from "@chakra-ui/react";
 const TimeoutScreen = () => {
   const [selectedAd, setSelectedAd] = useState<string>("");
 
+  const ads = import.meta.glob("/src/assets/ads/*.{png,jpg,jpeg,svg}", {
+    eager: true,
+    import: "default",
+  });
+  const adsSrcs = Object.entries(ads).map(([path, mod]: any) => {
+    return mod.default || path.replace("/src/assets/", "assets/");
+  });
+
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * 4);
-    setSelectedAd(`assets/ads/ad${randomIndex + 1}.png`);
+    const randomIndex = Math.floor(Math.random() * adsSrcs.length);
+    setSelectedAd(adsSrcs[randomIndex]);
   }, []);
 
   return (
@@ -16,10 +24,10 @@ const TimeoutScreen = () => {
           minH="100vh"
           justify="center"
           align="center"
-          bg="black" // opcjonalnie tło
+          bg="black"
         >
           <Image
-           draggable="false"
+            draggable="false"
             src={selectedAd}
             alt="Advertisement"
             objectFit="contain"
