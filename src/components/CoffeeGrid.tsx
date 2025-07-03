@@ -43,6 +43,17 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+  if (selectedIndex !== null) {
+    const timer = setTimeout(() => {
+      setSelectedIndex(null);
+    }, 3000); 
+
+    return () => clearTimeout(timer); 
+  }
+}, [selectedIndex]);
+
+
   const updateStorage = (updated: typeof coffeeList) => {
     setCoffeeList(updated);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
@@ -97,7 +108,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
               position="relative"
               width="100%"
               onClickCapture={() => handleCoffeeClick(index)}
-              cursor="pointer"
+              
               borderWidth={selectedIndex === index ? "3px" : "1px"}
               borderColor={selectedIndex === index ? "blue.400" : "black"}
               borderRadius="lg"

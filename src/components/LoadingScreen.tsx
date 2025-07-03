@@ -11,11 +11,9 @@ export default function LoadingScreen({ progress, ready }: Props) {
 
   useEffect(() => {
     if (ready) {
-      // Delay switching to ready screen by 300ms to avoid flicker
-      const timeout = setTimeout(() => setShowReady(true), 300);
+      const timeout = setTimeout(() => setShowReady(true), 500);
       return () => clearTimeout(timeout);
     } else {
-      // When ready becomes false, hide immediately
       setShowReady(false);
     }
   }, [ready]);
