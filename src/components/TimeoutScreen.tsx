@@ -3,7 +3,7 @@ import { Flex, Image } from "@chakra-ui/react";
 const TimeoutScreen = () => {
   const [selectedAd, setSelectedAd] = useState<string>("");
 
-  const ads = import.meta.glob("/src/assets/ads/*.{png,jpg,jpeg,svg}", {
+  const ads = import.meta.glob("/src/assets/ads/*.{png,jpg,jpeg,svg,gif}", {
     eager: true,
     import: "default",
   });

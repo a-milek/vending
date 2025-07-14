@@ -58,7 +58,7 @@ const PhotoEditModal = ({ isOpen, onClose, onSave }: Props) => {
                 key={i}
                 borderColor={src === inputValue ? "blue.400" : "gray.300"}
                 borderRadius="md"
-                cursor="pointer"
+                cursor="none"
                 onClick={() => handleIconClick(src)}
                 _hover={{ borderColor: "blue.600" }}
                 p={1}
@@ -67,12 +67,11 @@ const PhotoEditModal = ({ isOpen, onClose, onSave }: Props) => {
                 alignItems="center"
               >
                 <Image
-                 draggable="false"
+                  draggable="false"
                   src={src}
                   alt={`icon-${i}`}
                   boxSize="100%"
                   objectFit="contain"
-                  
                   userSelect="none"
                 />
               </Box>

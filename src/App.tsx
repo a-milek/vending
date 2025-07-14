@@ -13,10 +13,11 @@ function App() {
   const [wsConnected, setWsConnected] = useState(false);
   const [lines, setLines] = useState<string[]>(["Oczekiwanie na dane"]);
   const [tech, setTech] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(1);
   const [ready, setReady] = useState(false);
   const [current, setCurrentPrice] = useState<number | null>(null);
   const currentPriceRef = useRef<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     currentPriceRef.current = current;
@@ -117,17 +118,19 @@ function App() {
       >
         {!wsConnected && <p>Reconnecting...</p>}
 
-        {progress > 0 || ready ? (
+        {loading || ready ? (
           <>
             <LoadingScreen progress={progress} ready={ready} />
             <VisuallyHidden>
               <SugarPanel
+                tech={tech}
                 onClick={placeOrder}
                 lines={lines}
                 setTech={setTech}
                 setProgress={setProgress}
                 setReady={setReady}
                 setCurrentPrice={setCurrentPrice}
+                setLoading={setLoading}
               />
             </VisuallyHidden>
           </>
@@ -140,6 +143,8 @@ function App() {
               setProgress={setProgress}
               setReady={setReady}
               setCurrentPrice={setCurrentPrice}
+              setLoading={setLoading}
+              tech={tech}
             />
             {tech ? (
               <TechKeyboard

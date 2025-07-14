@@ -23,8 +23,10 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const [coffeeList, setCoffeeList] = useState(coffeeData);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingNameIndex, setEditingNameIndex] = useState<number | null>(null);
-  const [editingPhotoIndex, setEditingPhotoIndex] = useState<number | null>(null);
-  
+  const [editingPhotoIndex, setEditingPhotoIndex] = useState<number | null>(
+    null
+  );
+
   // Track selected (highlighted) coffee index:
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -44,15 +46,14 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   }, []);
 
   useEffect(() => {
-  if (selectedIndex !== null) {
-    const timer = setTimeout(() => {
-      setSelectedIndex(null);
-    }, 3000); 
+    if (selectedIndex !== null) {
+      const timer = setTimeout(() => {
+        setSelectedIndex(null);
+      }, 10000);
 
-    return () => clearTimeout(timer); 
-  }
-}, [selectedIndex]);
-
+      return () => clearTimeout(timer);
+    }
+  }, [selectedIndex]);
 
   const updateStorage = (updated: typeof coffeeList) => {
     setCoffeeList(updated);
@@ -108,15 +109,14 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
               position="relative"
               width="100%"
               onClickCapture={() => handleCoffeeClick(index)}
-              
-              borderWidth={selectedIndex === index ? "3px" : "1px"}
+              borderWidth="3px"
               borderColor={selectedIndex === index ? "blue.400" : "black"}
               borderRadius="lg"
               transition="border-color 0.3s ease"
-              _hover={{ borderColor: "blue.300" }}
+              cursor="none"
             >
               <Image
-                src={coffee.image || "assets/icons/simplecoffee.png"}
+                src={coffee.image || "assets/icons/13.png"}
                 alt={coffee.name}
                 width="100%"
                 borderRadius="lg"

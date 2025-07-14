@@ -4,9 +4,10 @@ interface Props {
   lines: string[];
 
   sugar: number;
+  tech: boolean;
 }
 
-const LCD_Simulator = ({ lines, sugar }: Props) => {
+const LCD_Simulator = ({ lines, sugar, tech }: Props) => {
   const TextStyle = {
     color: "white",
     fontSize: "xl",
@@ -19,7 +20,8 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
       height="100%"
       borderWidth="1px"
       borderRadius="lg"
-      bg="#1952FF"
+      bgImage="url('https://via.placeholder.com/300')"
+      bgSize="cover"
       aspectRatio={1}
       userSelect="none"
       display="flex"
@@ -38,24 +40,25 @@ const LCD_Simulator = ({ lines, sugar }: Props) => {
                 </Text>
               ))}
           </VStack>
-
-          <HStack justify="center" alignSelf="flex-end">
-            {sugar != 0 ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <Box
-                  key={i}
-                  boxSize="30px" // ← tweak size here if needed
-                  bg={i < sugar ? "whiteAlpha.800" : "#0F4AFE"}
-                  borderRadius="sm"
-                />
-              ))
-            ) : (
-              <Text paddingY={2} {...TextStyle}>
-                Brak cukru
-              </Text>
-            )}
-          </HStack>
-      </Box>
+          {tech ? null : (
+            <HStack justify="center" alignSelf="flex-end">
+              {sugar != 0 ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <Box
+                    key={i}
+                    boxSize="30px" // ← tweak size here if needed
+                    bg={i < sugar ? "whiteAlpha.800" : "#0F4AFE"}
+                    borderRadius="sm"
+                  />
+                ))
+              ) : (
+                <Text paddingY={2} {...TextStyle}>
+                  Brak cukru
+                </Text>
+              )}
+            </HStack>
+          )}
+        </Box>
       </Flex>
     </Box>
   );

@@ -7,6 +7,9 @@ interface Props {
   setProgress: (value: number) => void;
   setReady: (value: boolean) => void;
   setCurrentPrice: (price: number | null) => void; // nowy prop
+
+  setLoading: (value: boolean) => void; // dodaj to
+  tech: boolean;
 }
 
 const ScreenInterpreter = ({
@@ -15,6 +18,8 @@ const ScreenInterpreter = ({
   setProgress,
   setReady,
   setCurrentPrice,
+  tech,
+  setLoading,
 }: Props) => {
   const [sugar, setSugar] = useState(0);
   const [interpretedLines, setInterpretedLines] = useState<string[]>([]);
@@ -42,18 +47,20 @@ const ScreenInterpreter = ({
 
       // Postęp
       const codes = [...line].map((ch) => ch.charCodeAt(0));
-      const progressCodes = codes.filter((code) => code >= 0x03 && code <= 0x07);
+      const progressCodes = codes.filter(
+        (code) => code >= 0x03 && code <= 0x07
+      );
       if (progressCodes.length > 0) {
+        setLoading(true);
         foundProgress = true;
         const sum = progressCodes.reduce((a, b) => a + b, 0);
         const percent = Math.round((sum / 126) * 100);
         console.log(percent);
-          if(percent==100){
-            setReady(true);
+        if (percent == 100) {
+          setReady(true);
         }
-        
+
         setProgress(percent);
-      
       }
 
       // Tryb techniczny i gotowość
@@ -61,12 +68,13 @@ const ScreenInterpreter = ({
         setTech(true);
       }
       if (line.startsWith("WYBIERZ")) {
+        setLoading(false);
         setTech(false);
         setProgress(0);
         setReady(false);
       }
       if (line.startsWith("NAPOJ")) {
-        setProgress(100)
+        setProgress(100);
         setReady(true);
       }
 
@@ -90,13 +98,13 @@ const ScreenInterpreter = ({
 
     if (!foundProgress) setProgress(0);
     if (sugarCount !== null) {
-  setSugar(sugarCount);
-}
+      setSugar(sugarCount);
+    }
     setCurrentPrice(currentPrice);
     setInterpretedLines(newLines);
   }
 
-  return <LCD_Simulator lines={interpretedLines} sugar={sugar} />;
+  return <LCD_Simulator lines={interpretedLines} sugar={sugar} tech={tech} />;
 };
 
 export default ScreenInterpreter;
