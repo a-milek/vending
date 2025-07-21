@@ -1,44 +1,64 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Box, VisuallyHidden } from "@chakra-ui/react";
+import { useIdleTimer } from "react-idle-timer";
+
 import CoffeeGrid from "./components/CoffeeGrid";
 import coffeeData from "./config/CoffeeData";
 import TimeoutScreen from "./components/TimeoutScreen";
-import { useIdleTimer } from "react-idle-timer";
 import TechKeyboard from "./components/TechKeyboard";
 import SugarPanel from "./components/SugarPanel";
 import LoadingScreen from "./components/LoadingScreen";
-import { Box, VisuallyHidden } from "@chakra-ui/react";
 
 function App() {
-  const [isTimedOut, setIsTimedOut] = useState(false);
+  // --- UI & state control ---
+  const [isTimedOut, setIsTimedOut] = useState(true);
   const [wsConnected, setWsConnected] = useState(false);
   const [lines, setLines] = useState<string[]>(["Oczekiwanie na dane"]);
   const [tech, setTech] = useState(false);
   const [progress, setProgress] = useState(1);
   const [ready, setReady] = useState(false);
-  const [current, setCurrentPrice] = useState<number | null>(null);
-  const currentPriceRef = useRef<number | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // --- Price & order control ---
+  const [current, setCurrentPrice] = useState<number | null>(null);
+  const currentPriceRef = useRef<number | null>(null);
+  const getCurrentPrice = useCallback(() => currentPriceRef.current, []);
   useEffect(() => {
     currentPriceRef.current = current;
   }, [current]);
 
-  const getCurrentPrice = () => currentPriceRef.current;
+  // --- Coffee List ---
+  const [coffeeList, setCoffeeList] = useState(() => {
+    const stored = localStorage.getItem("coffee-prices");
+    return stored ? JSON.parse(stored) : coffeeData;
+  });
+  useEffect(() => {
+    localStorage.setItem("coffee-prices", JSON.stringify(coffeeList));
+  }, [coffeeList]);
 
+  // --- Prevent dragging images ---
+  useEffect(() => {
+    document
+      .querySelectorAll("img")
+      .forEach((img) => img.setAttribute("draggable", "false"));
+  }, []);
+
+  // --- WebSocket Handling ---
   const ws = useRef<WebSocket | null>(null);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const connectWebSocket = () => {
+  const connectWebSocket = useCallback(() => {
     ws.current = new WebSocket("ws://0.0.0.0:8765/");
     ws.current.onopen = () => setWsConnected(true);
+
     ws.current.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
-        if (msg && typeof msg.message === "string") {
+        if (msg?.message) {
           const cleanedLines = msg.message
             .split("\n")
             .filter((line: string) => !line.startsWith("LCD Proper:"));
-          setLines([...cleanedLines]);
+          setLines(cleanedLines);
         }
       } catch (err) {
         console.error("Invalid JSON:", event.data);
@@ -46,36 +66,30 @@ function App() {
     };
 
     ws.current.onerror = () => setWsConnected(false);
-
     ws.current.onclose = () => {
       setWsConnected(false);
       reconnectTimeout.current = setTimeout(connectWebSocket, 3000);
     };
-  };
+  }, []);
 
   useEffect(() => {
     connectWebSocket();
     return () => {
-      if (ws.current) ws.current.close();
+      ws.current?.close();
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
     };
-  }, []);
+  }, [connectWebSocket]);
 
+  // --- Idle Timer ---
   useIdleTimer({
     timeout: 1000 * 120,
-    onIdle: () => {
-      console.log("User is idle, showing timeout screen");
-      setIsTimedOut(true);
-    },
-    onActive: () => {
-      console.log("User active again");
-      setIsTimedOut(false);
-    },
+    onIdle: () => setIsTimedOut(true),
+    onActive: () => setIsTimedOut(false),
     debounce: 500,
   });
 
+  // --- Order Logic ---
   const placeOrder = async (servId: string | number) => {
-    console.log("id: ", servId);
     try {
       const res = await fetch("order", {
         method: "POST",
@@ -89,54 +103,33 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    document.querySelectorAll("img").forEach((img) => {
-      img.setAttribute("draggable", "false");
-    });
-  }, []);
-
   const handleCoffeeSelection = async (index: number) => {
-    const coffee = coffeeData[index];
+    const coffee = coffeeList[index];
     if (!coffee) return;
     try {
       await placeOrder(coffee.servId);
-    } catch {
-      // handle error if needed
-    }
+    } catch {}
   };
 
-  if (isTimedOut && !tech) {
-    return <TimeoutScreen />;
-  }
+  // --- Timeout view ---
+  if (isTimedOut && !tech) return <TimeoutScreen />;
 
+  // --- Main view ---
   return (
-    <>
-      <Box
-        bg={tech ? "red" : "blackAlpha.900"}
-        minHeight="100vh"
-        alignContent={"center"}
-      >
-        {!wsConnected && <p>Reconnecting...</p>}
+    <Box
+      bg={tech ? "red" : "black"}
+      minH="100vh"
+      minW="100vw"
+      alignContent="center"
+    >
+      {!wsConnected && <p>Reconnecting...</p>}
 
-        {loading || ready ? (
-          <>
-            <LoadingScreen progress={progress} ready={ready} />
-            <VisuallyHidden>
-              <SugarPanel
-                tech={tech}
-                onClick={placeOrder}
-                lines={lines}
-                setTech={setTech}
-                setProgress={setProgress}
-                setReady={setReady}
-                setCurrentPrice={setCurrentPrice}
-                setLoading={setLoading}
-              />
-            </VisuallyHidden>
-          </>
-        ) : (
-          <>
+      {loading || ready ? (
+        <>
+          <LoadingScreen progress={progress} ready={ready} />
+          <VisuallyHidden>
             <SugarPanel
+              tech={tech}
               onClick={placeOrder}
               lines={lines}
               setTech={setTech}
@@ -144,37 +137,37 @@ function App() {
               setReady={setReady}
               setCurrentPrice={setCurrentPrice}
               setLoading={setLoading}
-              tech={tech}
             />
-            {tech ? (
-              <TechKeyboard
-                onClick={placeOrder}
-                getCurrentPrice={getCurrentPrice}
-              />
-            ) : null}
-            <CoffeeGrid onClick={handleCoffeeSelection} tech={tech} />
-          </>
-        )}
-      </Box>
-    </>
+          </VisuallyHidden>
+        </>
+      ) : (
+        <>
+          <SugarPanel
+            onClick={placeOrder}
+            lines={lines}
+            setTech={setTech}
+            setProgress={setProgress}
+            setReady={setReady}
+            setCurrentPrice={setCurrentPrice}
+            setLoading={setLoading}
+            tech={tech}
+          />
+          {tech && (
+            <TechKeyboard
+              onClick={placeOrder}
+              getCurrentPrice={getCurrentPrice}
+            />
+          )}
+          <CoffeeGrid
+            coffeeList={coffeeList}
+            setCoffeeList={setCoffeeList}
+            onClick={handleCoffeeSelection}
+            tech={tech}
+          />
+        </>
+      )}
+    </Box>
   );
-
-  // return (
-  //   <>
-  //     {!wsConnected && <p>Reconnecting...</p>}
-  //     {/* <LoadingScreen progress={progress} /> */}
-  //       <SugarPanel
-  //       onClick={placeOrder}
-  //       lines={lines}
-  //       setTech={setTech}
-  //       setProgress={setProgress}
-  //     />
-  //     {tech ? <TechKeyboard onClick={placeOrder} /> : null}
-  //     <>
-  //       <CoffeeGrid onClick={handleCoffeeSelection} />
-  //     </>
-  //   </>
-  //  );
 }
 
 export default App;

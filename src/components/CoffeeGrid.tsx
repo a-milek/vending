@@ -6,24 +6,34 @@ import {
   Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import coffeeData from "../config/CoffeeData";
+import { useState } from "react";
 import PriceEditModal from "./PriceEditModal";
 import NameEditModal from "./NameEditModal";
 import PhotoEditModal from "./PhotoEditModal";
+import IndexEditModal from "./IndexEditModal";
+import { useEffect } from "react";
+
+interface CoffeeType {
+  servId: string;
+  price: number;
+  name: string;
+  image: string;
+}
 
 interface Props {
   onClick: (index: number) => void;
   tech: boolean;
+  coffeeList: CoffeeType[];
+  setCoffeeList: React.Dispatch<React.SetStateAction<CoffeeType[]>>;
 }
 
-const LOCAL_STORAGE_KEY = "coffee-prices";
-
-const CoffeeGrid = ({ onClick, tech }: Props) => {
-  const [coffeeList, setCoffeeList] = useState(coffeeData);
+const CoffeeGrid = ({ onClick, tech, coffeeList, setCoffeeList }: Props) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingNameIndex, setEditingNameIndex] = useState<number | null>(null);
   const [editingPhotoIndex, setEditingPhotoIndex] = useState<number | null>(
+    null
+  );
+  const [selectedButtonIndex, setSelectedButtonIndex] = useState<number | null>(
     null
   );
 
@@ -33,31 +43,11 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const photoModal = useDisclosure();
   const priceModal = useDisclosure();
   const nameModal = useDisclosure();
+  const indexModal = useDisclosure();
 
-  useEffect(() => {
-    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (stored) {
-      try {
-        setCoffeeList(JSON.parse(stored));
-      } catch (e) {
-        console.error("Błąd odczytu localStorage:", e);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedIndex !== null) {
-      const timer = setTimeout(() => {
-        setSelectedIndex(null);
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [selectedIndex]);
-
-  const updateStorage = (updated: typeof coffeeList) => {
+  const updateStorage = (updated: CoffeeType[]) => {
     setCoffeeList(updated);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+    // localStorage is handled by parent now
   };
 
   const handlePriceChange = (index: number, newPrice: number) => {
@@ -69,6 +59,39 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
   const handleNameChange = (index: number, newName: string) => {
     const updated = [...coffeeList];
     updated[index].name = newName;
+    updateStorage(updated);
+  };
+
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      const timeout = setTimeout(() => {
+        setSelectedIndex(null);
+      }, 7000); // 10 seconds
+
+      return () => clearTimeout(timeout); // Cleanup if index changes before 10s
+    }
+  }, [selectedIndex]);
+
+  const handleIndexChange = (index: number, inputValue: string) => {
+    const n = parseInt(inputValue, 10);
+
+    if (isNaN(n) || n < 1 || n > 16) {
+      alert("Podaj liczbę od 1 do 15.");
+      return;
+    }
+
+    const servIdNumber = n + 1;
+
+    let servId: string;
+
+    if (servIdNumber <= 9) {
+      servId = servIdNumber.toString();
+    } else {
+      servId = String.fromCharCode(55 + servIdNumber);
+    }
+
+    const updated = [...coffeeList];
+    updated[index].servId = servId;
     updateStorage(updated);
   };
 
@@ -87,10 +110,23 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
     photoModal.onOpen();
   };
 
-  // Handle click on coffee item: call parent onClick & set selected highlight
   const handleCoffeeClick = (index: number) => {
     setSelectedIndex(index);
     onClick(index);
+  };
+
+  const handleSetIndexClick = (index: number) => {
+    setSelectedButtonIndex(index);
+    indexModal.onOpen();
+  };
+
+  const servIdToDisplayNumber = (servId: string): number => {
+    if (/^[2-9]$/.test(servId)) {
+      return parseInt(servId, 10) - 1;
+    } else if (/^[A-H]$/.test(servId)) {
+      return servId.charCodeAt(0) - 55 - 1;
+    }
+    return 1;
   };
 
   return (
@@ -110,7 +146,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
               width="100%"
               onClickCapture={() => handleCoffeeClick(index)}
               borderWidth="3px"
-              borderColor={selectedIndex === index ? "blue.400" : "black"}
+              borderColor={selectedIndex === index ? "white" : "black"}
               borderRadius="lg"
               transition="border-color 0.3s ease"
               cursor="none"
@@ -120,7 +156,7 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
                 alt={coffee.name}
                 width="100%"
                 borderRadius="lg"
-                draggable="false"
+                draggable={false}
                 userSelect="none"
               />
               <Text
@@ -157,6 +193,27 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
               >
                 {coffee.name}
               </Text>
+
+              {tech && (
+                <Text
+                  position="absolute"
+                  bottom={3}
+                  right={3}
+                  bg="whiteAlpha.800"
+                  color="black"
+                  fontWeight="bold"
+                  fontSize="lg"
+                  px={2}
+                  py={1}
+                  borderRadius="md"
+                  userSelect="none"
+                  pointerEvents="none"
+                  minWidth="24px"
+                  textAlign="center"
+                >
+                  {servIdToDisplayNumber(coffee.servId)}
+                </Text>
+              )}
             </Box>
             {tech && (
               <>
@@ -185,6 +242,15 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
                     onClick={() => handleSetPicClick(index)}
                   >
                     Ustaw obrazek
+                  </Button>
+                </Box>
+                <Box mt={2}>
+                  <Button
+                    size="md"
+                    width="100%"
+                    onClick={() => handleSetIndexClick(index)}
+                  >
+                    Ustaw indeks
                   </Button>
                 </Box>
               </>
@@ -221,6 +287,16 @@ const CoffeeGrid = ({ onClick, tech }: Props) => {
         onSave={(name) => {
           if (editingNameIndex !== null) {
             handleNameChange(editingNameIndex, name);
+          }
+        }}
+      />
+
+      <IndexEditModal
+        isOpen={indexModal.isOpen}
+        onClose={indexModal.onClose}
+        onSave={(inputValue) => {
+          if (selectedButtonIndex !== null) {
+            handleIndexChange(selectedButtonIndex, inputValue);
           }
         }}
       />
