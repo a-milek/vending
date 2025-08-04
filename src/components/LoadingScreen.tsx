@@ -27,6 +27,7 @@ export default function LoadingScreen({ progress, ready }: Props) {
       position="relative"
       direction="column"
     >
+      
       <Image
         src="assets/coffee-2.gif"
         alt="Brewing coffee..."

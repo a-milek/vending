@@ -6,10 +6,12 @@ interface Props {
   setTech: (value: boolean) => void;
   setProgress: (value: number) => void;
   setReady: (value: boolean) => void;
-  setCurrentPrice: (price: number | null) => void; // nowy prop
-
+  setCurrentPrice: (price: number | null) => void;
+  setIsTimedOut: (value: boolean) => void;
   setLoading: (value: boolean) => void; // dodaj to
+  setHasCredit: (value: boolean) => void;
   tech: boolean;
+    clearAutoResumeTimer: () => void;
 }
 
 const ScreenInterpreter = ({
@@ -20,6 +22,9 @@ const ScreenInterpreter = ({
   setCurrentPrice,
   tech,
   setLoading,
+  setIsTimedOut,
+  setHasCredit,
+  clearAutoResumeTimer
 }: Props) => {
   const [sugar, setSugar] = useState(0);
   const [interpretedLines, setInterpretedLines] = useState<string[]>([]);
@@ -77,7 +82,14 @@ const ScreenInterpreter = ({
         setProgress(100);
         setReady(true);
       }
-
+      if (line.startsWith("Kredyt")) {
+        console.log("kredyt")
+  setIsTimedOut(false);
+  setHasCredit(true);
+  clearAutoResumeTimer();
+} else {
+  setHasCredit(false);
+}
       // Cena
       if (line.startsWith("Cena")) {
         const hasDigits = /\d/.test(line);

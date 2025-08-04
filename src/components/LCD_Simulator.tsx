@@ -47,7 +47,7 @@ const LCD_Simulator = ({ lines, sugar, tech }: Props) => {
                   <Box
                     key={i}
                     boxSize="30px" // ← tweak size here if needed
-                    bg={i < sugar ? "whiteAlpha.800" : "#0F4AFE"}
+                    bg={i < sugar ? "whiteAlpha.800" : "black"}
                     borderRadius="sm"
                   />
                 ))

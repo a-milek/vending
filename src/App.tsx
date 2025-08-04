@@ -10,14 +10,16 @@ import SugarPanel from "./components/SugarPanel";
 import LoadingScreen from "./components/LoadingScreen";
 
 function App() {
+  const autoResumeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   // --- UI & state control ---
-  const [isTimedOut, setIsTimedOut] = useState(true);
+  const [isTimedOut, setIsTimedOut] = useState(false);
   const [wsConnected, setWsConnected] = useState(false);
   const [lines, setLines] = useState<string[]>(["Oczekiwanie na dane"]);
   const [tech, setTech] = useState(false);
   const [progress, setProgress] = useState(1);
   const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasCredit, setHasCredit] = useState(false);
 
   // --- Price & order control ---
   const [current, setCurrentPrice] = useState<number | null>(null);
@@ -42,6 +44,13 @@ function App() {
       .querySelectorAll("img")
       .forEach((img) => img.setAttribute("draggable", "false"));
   }, []);
+
+  const clearAutoResumeTimer = () => {
+  if (autoResumeTimeout.current) {
+    clearTimeout(autoResumeTimeout.current);
+    autoResumeTimeout.current = null;
+  }
+};
 
   // --- WebSocket Handling ---
   const ws = useRef<WebSocket | null>(null);
@@ -82,11 +91,36 @@ function App() {
 
   // --- Idle Timer ---
   useIdleTimer({
-    timeout: 1000 * 120,
-    onIdle: () => setIsTimedOut(true),
-    onActive: () => setIsTimedOut(false),
-    debounce: 500,
-  });
+  timeout: 1000 * 120, // 2 minutes
+  debounce: 500,
+  onIdle: () => {
+    if (!hasCredit) {
+      console.log("User idle — showing timeout screen");
+      setIsTimedOut(true);
+
+      // Start timer to auto-resume after 1 minute
+      if (autoResumeTimeout.current) {
+        clearTimeout(autoResumeTimeout.current);
+      }
+      autoResumeTimeout.current = setTimeout(() => {
+        console.log("Auto-resume triggered after 1 minute");
+        setIsTimedOut(false);
+      }, 1000 * 60); // 1 minute
+    } else {
+      console.log("Idle ignored — 'Kredyt' is active");
+    }
+  },
+  onActive: () => {
+    console.log("User became active — hiding timeout screen");
+    setIsTimedOut(false);
+
+    // Cancel auto-resume timer if user became active
+    if (autoResumeTimeout.current) {
+      clearTimeout(autoResumeTimeout.current);
+      autoResumeTimeout.current = null;
+    }
+  }
+});
 
   // --- Order Logic ---
   const placeOrder = async (servId: string | number) => {
@@ -111,8 +145,28 @@ function App() {
     } catch {}
   };
 
+  useEffect(() => {
+  return () => {
+    if (autoResumeTimeout.current) {
+      clearTimeout(autoResumeTimeout.current);
+    }
+  };
+}, []);
+
   // --- Timeout view ---
-  if (isTimedOut && !tech) return <TimeoutScreen />;
+  if (isTimedOut && !tech) return <> <TimeoutScreen /><VisuallyHidden><SugarPanel
+              tech={tech}
+              onClick={placeOrder}
+              lines={lines}
+              setTech={setTech}
+              setProgress={setProgress}
+              setReady={setReady}
+              setCurrentPrice={setCurrentPrice}
+              setLoading={setLoading}
+              setIsTimedOut={setIsTimedOut}
+              setHasCredit={setHasCredit}
+              clearAutoResumeTimer={clearAutoResumeTimer}
+            /></VisuallyHidden></>;
 
   // --- Main view ---
   return (
@@ -122,10 +176,14 @@ function App() {
       minW="100vw"
       alignContent="center"
     >
+   
       {!wsConnected && <p>Reconnecting...</p>}
+    
 
       {loading || ready ? (
         <>
+        
+        console.log(loading);
           <LoadingScreen progress={progress} ready={ready} />
           <VisuallyHidden>
             <SugarPanel
@@ -137,6 +195,9 @@ function App() {
               setReady={setReady}
               setCurrentPrice={setCurrentPrice}
               setLoading={setLoading}
+              setIsTimedOut={setIsTimedOut}
+              setHasCredit={setHasCredit}
+              clearAutoResumeTimer={clearAutoResumeTimer}
             />
           </VisuallyHidden>
         </>
@@ -151,6 +212,9 @@ function App() {
             setCurrentPrice={setCurrentPrice}
             setLoading={setLoading}
             tech={tech}
+            setIsTimedOut={setIsTimedOut}
+            setHasCredit={setHasCredit}
+            clearAutoResumeTimer={clearAutoResumeTimer}
           />
           {tech && (
             <TechKeyboard
@@ -169,5 +233,6 @@ function App() {
     </Box>
   );
 }
+
 
 export default App;

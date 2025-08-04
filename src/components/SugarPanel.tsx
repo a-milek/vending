@@ -8,9 +8,11 @@ interface Props {
   setProgress: (value: number) => void;
   setReady: (vlue: boolean) => void;
   setCurrentPrice: (price: number | null) => void;
-
+setIsTimedOut:(value:boolean)=>void;
   setLoading: (value: boolean) => void; // dodaj to
   tech: boolean;
+  setHasCredit:(value:boolean)=>void;
+   clearAutoResumeTimer: () => void;
 }
 
 const SugarPanel = ({
@@ -22,6 +24,8 @@ const SugarPanel = ({
   setCurrentPrice,
   setLoading,
   tech,
+  setIsTimedOut,
+  setHasCredit, clearAutoResumeTimer
 }: Props) => {
   return (
     <HStack gap={5} py={2} paddingTop="40px" width="70%" mx="auto">
@@ -68,6 +72,9 @@ const SugarPanel = ({
           setCurrentPrice={setCurrentPrice}
           setLoading={setLoading}
           tech={tech}
+          setIsTimedOut={setIsTimedOut}
+          setHasCredit={setHasCredit}
+            clearAutoResumeTimer={clearAutoResumeTimer}
         />
       </Flex>
 
