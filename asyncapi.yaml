@@ -11,23 +11,58 @@ servers:
     protocol: ws
 
 channels:
-  coinChanger/commands:
-    description: Commands to the coin changer
-    publish: # client sends → coin changer
+  # Oddzielne kanały dla każdej komendy
+  coinChanger/commands/reset:
+    description: Reset command to the coin changer
+    publish:
       message:
-        oneOf:
-          - $ref: "#/components/messages/ResetCommand"
-          - $ref: "#/components/messages/IdentifyCommand"
-          - $ref: "#/components/messages/EnableCommand"
-          - $ref: "#/components/messages/DisableCommand"
-          - $ref: "#/components/messages/SpendCommand"
-          - $ref: "#/components/messages/DispenseCommand"
-          - $ref: "#/components/messages/ConfigureCoinCommand"
-          - $ref: "#/components/messages/ConfigureFeaturesCommand"
+        $ref: "#/components/messages/ResetCommand"
+
+  coinChanger/commands/identify:
+    description: Identify command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/IdentifyCommand"
+
+  coinChanger/commands/enable:
+    description: Enable command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/EnableCommand"
+
+  coinChanger/commands/disable:
+    description: Disable command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/DisableCommand"
+
+  coinChanger/commands/spend:
+    description: Spend command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/SpendCommand"
+
+  coinChanger/commands/dispense:
+    description: Dispense command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/DispenseCommand"
+
+  coinChanger/commands/configureCoin:
+    description: Configure coin command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/ConfigureCoinCommand"
+
+  coinChanger/commands/configureFeatures:
+    description: Configure features command to the coin changer
+    publish:
+      message:
+        $ref: "#/components/messages/ConfigureFeaturesCommand"
 
   coinChanger/events:
     description: Events from the coin changer
-    subscribe: # client receives ← coin changer
+    subscribe:
       message:
         $ref: "#/components/messages/WsMessage"
 
@@ -102,7 +137,7 @@ components:
 
     ConfigureCoinCommand:
       name: ConfigureCoinCommand
-      title: Configure Coin
+      title: ConfigureCoin
       payload:
         type: object
         properties:
@@ -120,7 +155,7 @@ components:
 
     ConfigureFeaturesCommand:
       name: ConfigureFeaturesCommand
-      title: Configure Features
+      title: ConfigureFeatures
       payload:
         type: object
         properties:
@@ -138,6 +173,7 @@ components:
 
     WsMessage:
       name: WsMessage
+      title: CoinChangerEvent
       payload:
         type: object
         properties:
