@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Box, VisuallyHidden } from "@chakra-ui/react";
-import { useIdleTimer } from "react-idle-timer";
+// import { useIdleTimer } from "react-idle-timer";
 
 import CoffeeGrid from "./components/CoffeeGrid";
 import coffeeData from "./config/CoffeeData";
-import TimeoutScreen from "./components/TimeoutScreen";
+// import TimeoutScreen from "./components/TimeoutScreen";
 import TechKeyboard from "./components/TechKeyboard";
 import SugarPanel from "./components/SugarPanel";
 import LoadingScreen from "./components/LoadingScreen";
@@ -46,11 +46,11 @@ function App() {
   }, []);
 
   const clearAutoResumeTimer = () => {
-  if (autoResumeTimeout.current) {
-    clearTimeout(autoResumeTimeout.current);
-    autoResumeTimeout.current = null;
-  }
-};
+    if (autoResumeTimeout.current) {
+      clearTimeout(autoResumeTimeout.current);
+      autoResumeTimeout.current = null;
+    }
+  };
 
   // --- WebSocket Handling ---
   const ws = useRef<WebSocket | null>(null);
@@ -90,37 +90,37 @@ function App() {
   }, [connectWebSocket]);
 
   // --- Idle Timer ---
-  useIdleTimer({
-  timeout: 1000 * 120, // 2 minutes
-  debounce: 500,
-  onIdle: () => {
-    if (!hasCredit) {
-      console.log("User idle — showing timeout screen");
-      setIsTimedOut(true);
+  // useIdleTimer({
+  //   timeout: 1000 * 120, // 2 minutes
+  //   debounce: 500,
+  //   onIdle: () => {
+  //     if (!hasCredit) {
+  //       console.log("User idle — showing timeout screen");
+  //       setIsTimedOut(true);
 
-      // Start timer to auto-resume after 1 minute
-      if (autoResumeTimeout.current) {
-        clearTimeout(autoResumeTimeout.current);
-      }
-      autoResumeTimeout.current = setTimeout(() => {
-        console.log("Auto-resume triggered after 1 minute");
-        setIsTimedOut(false);
-      }, 1000 * 60); // 1 minute
-    } else {
-      console.log("Idle ignored — 'Kredyt' is active");
-    }
-  },
-  onActive: () => {
-    console.log("User became active — hiding timeout screen");
-    setIsTimedOut(false);
+  //       // Start timer to auto-resume after 1 minute
+  //       if (autoResumeTimeout.current) {
+  //         clearTimeout(autoResumeTimeout.current);
+  //       }
+  //       autoResumeTimeout.current = setTimeout(() => {
+  //         console.log("Auto-resume triggered after 1 minute");
+  //         setIsTimedOut(false);
+  //       }, 1000 * 60); // 1 minute
+  //     } else {
+  //       console.log("Idle ignored — 'Kredyt' is active");
+  //     }
+  //   },
+  //   onActive: () => {
+  //     console.log("User became active — hiding timeout screen");
+  //     setIsTimedOut(false);
 
-    // Cancel auto-resume timer if user became active
-    if (autoResumeTimeout.current) {
-      clearTimeout(autoResumeTimeout.current);
-      autoResumeTimeout.current = null;
-    }
-  }
-});
+  //     // Cancel auto-resume timer if user became active
+  //     if (autoResumeTimeout.current) {
+  //       clearTimeout(autoResumeTimeout.current);
+  //       autoResumeTimeout.current = null;
+  //     }
+  //   },
+  // });
 
   // --- Order Logic ---
   const placeOrder = async (servId: string | number) => {
@@ -146,48 +146,74 @@ function App() {
   };
 
   useEffect(() => {
-  return () => {
-    if (autoResumeTimeout.current) {
-      clearTimeout(autoResumeTimeout.current);
-    }
-  };
-}, []);
+    return () => {
+      if (autoResumeTimeout.current) {
+        clearTimeout(autoResumeTimeout.current);
+      }
+    };
+  }, []);
 
   // --- Timeout view ---
-  if (isTimedOut && !tech) return <> <TimeoutScreen /><VisuallyHidden><SugarPanel
-              tech={tech}
-              onClick={placeOrder}
-              lines={lines}
-              setTech={setTech}
-              setProgress={setProgress}
-              setReady={setReady}
-              setCurrentPrice={setCurrentPrice}
-              setLoading={setLoading}
-              setIsTimedOut={setIsTimedOut}
-              setHasCredit={setHasCredit}
-              clearAutoResumeTimer={clearAutoResumeTimer}
-            /></VisuallyHidden></>;
+  // if (isTimedOut && !tech)
+  //   return (
+  //     <>
+  //       <TimeoutScreen />
+  //       <VisuallyHidden>
+  //         <SugarPanel
+  //           tech={tech}
+  //           onClick={placeOrder}
+  //           lines={lines}
+  //           setTech={setTech}
+  //           setProgress={setProgress}
+  //           setReady={setReady}
+  //           setCurrentPrice={setCurrentPrice}
+  //           setLoading={setLoading}
+  //           setIsTimedOut={setIsTimedOut}
+  //           setHasCredit={setHasCredit}
+  //           clearAutoResumeTimer={clearAutoResumeTimer}
+  //         />
+  //       </VisuallyHidden>
+  //     </>
+  //   );
 
   // --- Main view ---
   return (
-    <Box
-      bg={tech ? "red" : "black"}
-      minH="100vh"
-      minW="100vw"
-      alignContent="center"
-    >
-   
-      {!wsConnected && <p>Reconnecting...</p>}
-    
+    <>
+      <VisuallyHidden>
+        {isTimedOut}
+        {hasCredit}
+      </VisuallyHidden>
+      <Box
+        bg={tech ? "red" : "black"}
+        minH="100vh"
+        minW="100vw"
+        alignContent="center"
+      >
+        {!wsConnected && <p>Reconnecting...</p>}
 
-      {loading || ready ? (
-        <>
-        
-        console.log(loading);
-          <LoadingScreen progress={progress} ready={ready} />
-          <VisuallyHidden>
+        {loading || ready ? (
+          <>
+            console.log(loading);
+            <LoadingScreen progress={progress} ready={ready} />
+            <VisuallyHidden>
+              <SugarPanel
+                tech={tech}
+                onClick={placeOrder}
+                lines={lines}
+                setTech={setTech}
+                setProgress={setProgress}
+                setReady={setReady}
+                setCurrentPrice={setCurrentPrice}
+                setLoading={setLoading}
+                setIsTimedOut={setIsTimedOut}
+                setHasCredit={setHasCredit}
+                clearAutoResumeTimer={clearAutoResumeTimer}
+              />
+            </VisuallyHidden>
+          </>
+        ) : (
+          <>
             <SugarPanel
-              tech={tech}
               onClick={placeOrder}
               lines={lines}
               setTech={setTech}
@@ -195,44 +221,29 @@ function App() {
               setReady={setReady}
               setCurrentPrice={setCurrentPrice}
               setLoading={setLoading}
+              tech={tech}
               setIsTimedOut={setIsTimedOut}
               setHasCredit={setHasCredit}
               clearAutoResumeTimer={clearAutoResumeTimer}
             />
-          </VisuallyHidden>
-        </>
-      ) : (
-        <>
-          <SugarPanel
-            onClick={placeOrder}
-            lines={lines}
-            setTech={setTech}
-            setProgress={setProgress}
-            setReady={setReady}
-            setCurrentPrice={setCurrentPrice}
-            setLoading={setLoading}
-            tech={tech}
-            setIsTimedOut={setIsTimedOut}
-            setHasCredit={setHasCredit}
-            clearAutoResumeTimer={clearAutoResumeTimer}
-          />
-          {tech && (
-            <TechKeyboard
-              onClick={placeOrder}
-              getCurrentPrice={getCurrentPrice}
+            {tech && (
+              <TechKeyboard
+                onClick={placeOrder}
+                getCurrentPrice={getCurrentPrice}
+              />
+            )}
+
+            <CoffeeGrid
+              coffeeList={coffeeList}
+              setCoffeeList={setCoffeeList}
+              onClick={handleCoffeeSelection}
+              tech={tech}
             />
-          )}
-          <CoffeeGrid
-            coffeeList={coffeeList}
-            setCoffeeList={setCoffeeList}
-            onClick={handleCoffeeSelection}
-            tech={tech}
-          />
-        </>
-      )}
-    </Box>
+          </>
+        )}
+      </Box>
+    </>
   );
 }
-
 
 export default App;

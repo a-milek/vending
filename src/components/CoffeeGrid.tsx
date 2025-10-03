@@ -75,7 +75,7 @@ const CoffeeGrid = ({ onClick, tech, coffeeList, setCoffeeList }: Props) => {
   const handleIndexChange = (index: number, inputValue: string) => {
     const n = parseInt(inputValue, 10);
 
-    if (isNaN(n) ) {
+    if (isNaN(n)) {
       alert("Podaj liczbę");
       return;
     }

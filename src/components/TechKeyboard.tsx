@@ -105,14 +105,14 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
     <>
       {console.log(status)}
       <VStack gap={2}>
-        <SimpleGrid columns={2} gap={3} height="100%" width="77%" mx="auto">
+        <SimpleGrid columns={2} gap={3} height="100%" width="70%" mx="auto">
           <GridItem>
-            <Button onClick={() => onClick(10)} {...ButtonStyle}>
+            <Button onClick={() => onClick(11)} {...ButtonStyle}>
               Enter
             </Button>
           </GridItem>
           <GridItem>
-            <Button onClick={() => onClick(11)} {...ButtonStyle}>
+            <Button onClick={() => onClick(12)} {...ButtonStyle}>
               Escape
             </Button>
           </GridItem>

@@ -11,7 +11,7 @@ interface Props {
   setLoading: (value: boolean) => void; // dodaj to
   setHasCredit: (value: boolean) => void;
   tech: boolean;
-    clearAutoResumeTimer: () => void;
+  clearAutoResumeTimer: () => void;
 }
 
 const ScreenInterpreter = ({
@@ -24,7 +24,7 @@ const ScreenInterpreter = ({
   setLoading,
   setIsTimedOut,
   setHasCredit,
-  clearAutoResumeTimer
+  clearAutoResumeTimer,
 }: Props) => {
   const [sugar, setSugar] = useState(0);
   const [interpretedLines, setInterpretedLines] = useState<string[]>([]);
@@ -44,7 +44,7 @@ const ScreenInterpreter = ({
       let line = newLines[i];
 
       // Cukier
-      if (line.startsWith("Cukier") || line.startsWith("Bez cukru")) {
+      if (line.startsWith("Woda")) {
         sugarCount = [...line].filter((ch) => ch === "\x01").length;
         newLines[i] = "\u00A0";
         continue;
@@ -83,13 +83,13 @@ const ScreenInterpreter = ({
         setReady(true);
       }
       if (line.startsWith("Kredyt")) {
-        console.log("kredyt")
-  setIsTimedOut(false);
-  setHasCredit(true);
-  clearAutoResumeTimer();
-} else {
-  setHasCredit(false);
-}
+        console.log("kredyt");
+        setIsTimedOut(false);
+        setHasCredit(true);
+        clearAutoResumeTimer();
+      } else {
+        setHasCredit(false);
+      }
       // Cena
       if (line.startsWith("Cena")) {
         const hasDigits = /\d/.test(line);

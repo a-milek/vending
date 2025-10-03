@@ -42,20 +42,16 @@ const LCD_Simulator = ({ lines, sugar, tech }: Props) => {
           </VStack>
           {tech ? null : (
             <HStack justify="center" alignSelf="flex-end">
-              {sugar != 0 ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <Box
-                    key={i}
-                    boxSize="30px" // ← tweak size here if needed
-                    bg={i < sugar ? "whiteAlpha.800" : "black"}
-                    borderRadius="sm"
-                  />
-                ))
-              ) : (
-                <Text paddingY={2} {...TextStyle}>
-                  Brak cukru
-                </Text>
-              )}
+              {sugar != 0
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <Box
+                      key={i}
+                      boxSize="30px" // ← tweak size here if needed
+                      bg={i < sugar ? "whiteAlpha.800" : "black"}
+                      borderRadius="sm"
+                    />
+                  ))
+                : " "}
             </HStack>
           )}
         </Box>
