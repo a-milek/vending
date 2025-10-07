@@ -132,7 +132,7 @@ const CoffeeGrid = ({ onClick, tech, coffeeList, setCoffeeList }: Props) => {
   return (
     <>
       <SimpleGrid
-        columns={tech ? 4 : 3}
+        columns={4}
         gap={5}
         paddingY={5}
         height="100%"

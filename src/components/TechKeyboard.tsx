@@ -12,6 +12,7 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
   const ButtonStyle = {
     fontSize: "3xl",
     background: "black",
+    variant:"subtle",
     fontWeight: "semibold",
     color: "white",
     width: "100%",
