@@ -1,5 +1,6 @@
 import { Button, VStack, GridItem, SimpleGrid } from "@chakra-ui/react";
 import { useState } from "react";
+import key_config from "../config/KeyConfig";
 
 interface NumPadProps {
   onClick: (index: number) => void;
@@ -12,6 +13,7 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
   const ButtonStyle = {
     fontSize: "3xl",
     background: "black",
+    variant: "subtle",
     fontWeight: "semibold",
     color: "white",
     width: "100%",
@@ -20,13 +22,13 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
   };
 
   const errReset = async () => {
-    onClick(11);
+    onClick(key_config.esc);
     await sleep(1000);
-    onClick(10);
+    onClick(key_config.enter);
     await sleep(1000);
-    onClick(1);
+    onClick(key_config.plus);
     await sleep(1000);
-    onClick(10);
+    onClick(key_config.enter);
   };
 
   const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -67,9 +69,9 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
 
       while (Math.abs(currentPrice - targetPrice) > 0.0) {
         if (currentPrice < targetPrice) {
-          await onClick(1); // PLUS
+          await onClick(key_config.plus); // PLUS
         } else {
-          await onClick(0); // MINUS
+          await onClick(key_config.minus); // MINUS
         }
 
         await sleep(150);
@@ -93,7 +95,7 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
           2
         )}. Klikam Enter.`
       );
-      await onClick(10); // ENTER
+      await onClick(key_config.enter); // ENTER
 
       await sleep(500); // opcjonalne odczekanie przed kolejną pozycją
     }
@@ -107,12 +109,12 @@ const TechKeyboard = ({ onClick, getCurrentPrice }: NumPadProps) => {
       <VStack gap={2}>
         <SimpleGrid columns={2} gap={3} height="100%" width="70%" mx="auto">
           <GridItem>
-            <Button onClick={() => onClick(11)} {...ButtonStyle}>
+            <Button onClick={() => onClick(key_config.enter)} {...ButtonStyle}>
               Enter
             </Button>
           </GridItem>
           <GridItem>
-            <Button onClick={() => onClick(12)} {...ButtonStyle}>
+            <Button onClick={() => onClick(key_config.esc)} {...ButtonStyle}>
               Escape
             </Button>
           </GridItem>
