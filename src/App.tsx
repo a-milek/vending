@@ -141,7 +141,7 @@ function App() {
   const handleCoffeeSelection = async (index: number) => {
     const coffee = coffeeList[index];
     
-     if (coffee.name.toLowerCase().includes('zbożowa')) {
+     if (coffee.name.toLowerCase().includes('zbożowa') || coffee.name.toLowerCase().includes('zbożowe')) {
     try {
       await placeOrder(11);
     } catch (error) {
