@@ -10,6 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import ScreenInterpreter from "./ScreenInterpreter";
+import key_config from "../config/KeyConfig";
 
 interface Props {
   onClick: (index: number) => void;
@@ -67,7 +68,7 @@ const SugarPanel = ({
             width="100%"
             borderWidth="1px"
             borderRadius="lg"
-            onClick={() => onClick(0)}
+            onClick={() => onClick(key_config.minus)}
             draggable="false"
             userSelect="none"
           />
@@ -116,7 +117,7 @@ const SugarPanel = ({
             width="100%"
             borderWidth="1px"
             borderRadius="lg"
-            onClick={() => onClick(1)}
+            onClick={() => onClick(key_config.plus)}
             draggable="false"
             userSelect="none"
           />
@@ -126,7 +127,7 @@ const SugarPanel = ({
         <SimpleGrid columns={1} gap={3} height="100%" width="65%" mx="auto">
           <GridItem>
             <Button
-              onClick={() => onClick(2)}
+              onClick={() => onClick(key_config.cukier)}
               {...ButtonStyle}
               flexDirection="column"
             >
